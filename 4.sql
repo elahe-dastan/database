@@ -39,3 +39,22 @@ INSERT INTO os_grades VALUES (4, 6, 15);
 INSERT INTO os_grades VALUES (5, 7, 9);
 
 SELECT dg.student_id FROM db_grades dg LEFT JOIN os_grades og on dg.student_id = og.student_id WHERE dg.grade > 9 AND (og.grade < 10 OR og.grade IS NULL);
+
+CREATE TABLE bts(
+    N int PRIMARY KEY,
+    P int
+);
+
+INSERT INTO bts VALUES (1, 2);
+INSERT INTO bts VALUES (3, 2);
+INSERT INTO bts VALUES (6, 8);
+INSERT INTO bts VALUES (9, 8);
+INSERT INTO bts VALUES (2, 5);
+INSERT INTO bts VALUES (8, 5);
+INSERT INTO bts VALUES (5, NULL);
+
+SELECT N, 'ROOT' FROM bts WHERE P IS NULL
+UNION
+SELECT DISTINCT P, 'INNER' FROM bts WHERE P IS NOT NULL
+UNION
+SELECT DISTINCT a.N, 'leaf' FROM bts a LEFT JOIN bts b ON a.N = b.P WHERE  b.P IS NULL;
