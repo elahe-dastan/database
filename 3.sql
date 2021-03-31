@@ -59,6 +59,10 @@ INSERT INTO orders VALUES (2, 3, 1, 300000, 20000, 0, '2021-02-10 21:11:37' , '2
 INSERT INTO orders VALUES (3, 4, 4, 1000, 2000, 0, '2021-02-20 11:11:37' , '2021-02-10 22:34:37' , 2 );
 INSERT INTO orders VALUES (4, 5, 1, 400000, 70000, 0, '2021-04-10 13:11:37' , '2021-04-10 15:34:37' , 4 );
 INSERT INTO orders VALUES (5, 2, 2, 6000000, 900000, 0, '2021-06-10 21:11:37' , '2021-06-10 21:34:37' , 3 );
+INSERT INTO orders VALUES (6, 7, NULL, 500000, 950000, 0, NULL , NULL , NULL );
+INSERT INTO orders VALUES (7, 7, NULL, 500000, 950000, 0, NULL , NULL , NULL );
+INSERT INTO orders VALUES (8, 4, 4, 1000, 2000, 0, '2021-02-20 11:11:37' , '2021-02-21 22:34:37' , 2 );
+INSERT INTO orders VALUES (9, 1, 3, 5000000, 100000, 0, '2021-02-20 11:11:37' , '2021-02-20 11:59:37' , 5 );
 
 INSERT INTO payment VALUES (1, 1, 100000, 'sina', current_timestamp);
 INSERT INTO payment VALUES (2, 2, 10000, 'saman', '2021-06-10 21:11:37');
@@ -76,4 +80,18 @@ SELECT Id FROM user WHERE name='farbod';
 
 SELECT cellphone FROM user WHERE cellphone IN (SELECT cellphone FROM driver);
 
-SELECT name
+SELECT name FROM user u JOIN (SELECT user_id, driver_id FROM orders WHERE driver_id IS NULL GROUP BY user_id, driver_id HAVING COUNT(*) > 1) o ON o.user_id = u.Id;
+
+SELECT * FROM orders WHERE DATEDIFF(finish_time, start_time) = 1;
+
+SELECT * FROM user WHERE Id IN (SELECT user_id FROM orders WHERE driver_id IS NOT NULL GROUP BY user_id, driver_id HAVING COUNT(*) > 1);
+
+SELECT AVG(TIMESTAMPDIFF(SQL_TSI_MINUTE, start_time, finish_time)) AS minutes FROM orders WHERE score > 3;
+
+SELECT u.*, AVG(score) FROM user u JOIN orders o ON u.Id = o.user_id GROUP BY user_id ORDER BY AVG(score) DESC LIMIT 5;
+
+SELECT d.*, SUM(amount) FROM driver d JOIN orders o ON d.Id = o.driver_id JOIN payment p on p.user_id = o.user_id AND p.timing = o.start_time GROUP BY o.driver_id ORDER BY SUM(amount) DESC LIMIT 1;
+
+SELECT AVG(score) FROM orders WHERE user_id IN (SELECT user_id FROM payment WHERE bank='sina');
+
+SELECT SUM(amount) FROM payment WHERE user_id IN (SELECT a.Id FROM user a JOIN user b ON a.referred_by = b.Id WHERE b.name='farbod');
