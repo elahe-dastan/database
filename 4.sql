@@ -58,3 +58,16 @@ UNION
 SELECT DISTINCT P, 'INNER' FROM bts WHERE P IS NOT NULL
 UNION
 SELECT DISTINCT a.N, 'leaf' FROM bts a LEFT JOIN bts b ON a.N = b.P WHERE  b.P IS NULL;
+
+CREATE TABLE table1(
+    x int,
+    y int
+);
+
+INSERT INTO table1 VALUES (1, 2);
+INSERT INTO table1 VALUES (2, 3);
+INSERT INTO table1 VALUES (2, 1);
+INSERT INTO table1 VALUES (4, 5);
+INSERT INTO table1 VALUES (3, 2);
+
+SELECT a.x, a.y FROM table1 a JOIN table1 b ON a.x = b.y AND a.y = b.x;
